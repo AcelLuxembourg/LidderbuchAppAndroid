@@ -19,6 +19,7 @@ import java.util.Date;
 import lu.acel.lidderbuch.R;
 import lu.acel.lidderbuch.helper.FileHelper;
 import lu.acel.lidderbuch.Settings;
+import lu.acel.lidderbuch.helper.SongComparator;
 
 /**
  * Created by luis-fleta on 12/01/16.
@@ -66,7 +67,7 @@ public class LBSongbook {
         ArrayList<LBSong> songsList;
 
         // try loading from shared preferences
-        String songsStr = FileHelper.getKey(context, "songsJson");
+        String songsStr = FileHelper.getKey(context, LBShared.getCorrectAssetsPrefix());
 
         if(!TextUtils.isEmpty(songsStr)) {
             songsList = songsWithData(songsStr);
@@ -85,12 +86,14 @@ public class LBSongbook {
     public ArrayList<LBSong> loadBookmarked(Context context) {
         ArrayList<LBSong> bookmarked = new ArrayList<>();
 
-        if(songs.size() == 0)
+        if(songs.size() == 0) {
             return bookmarked;
+        }
 
         for(LBSong so : songs) {
-            if(so.isBookmarked())
+            if(so.isBookmarked()) {
                 bookmarked.add(bookmarkSong(so, context));
+            }
         }
 
         return bookmarked;
@@ -101,7 +104,7 @@ public class LBSongbook {
         Gson gson = new Gson();
         String jsonStr = gson.toJson(songs);
 
-        FileHelper.storeKey(context, "songsJson", jsonStr);
+        FileHelper.storeKey(context, LBShared.getCorrectAssetsPrefix(), jsonStr);
         hasChangesToSave = false;
     }
 
@@ -131,8 +134,9 @@ public class LBSongbook {
 
     public static ArrayList<LBSong> songsWithData(String songsTxt) {
 
-        if(TextUtils.isEmpty(songsTxt))
+        if(TextUtils.isEmpty(songsTxt)) {
             return null;
+        }
 
         ArrayList<LBSong> songsList = new ArrayList<>();
         try {
@@ -167,36 +171,16 @@ public class LBSongbook {
         return updateTime;
     }
 
-    public void integrateSongs(ArrayList<LBSong> newSongs, boolean replaceMeta, boolean replaceAll) {
-        ArrayList<Integer> bookmarkedIds = new ArrayList<>();
-        for(int i = 0; i < songsBookmarked.size(); i++) {
-            bookmarkedIds.add(songsBookmarked.get(i).getId());
-            songsBookmarked.get(i).setBookmarked(false);
-        }
-
-        for(int i = songs.size() - 1; i >= 0; i--) {
-            int idx = newSongs.indexOf(songs.get(i));
-            if(idx < 0 || replaceAll) {
-                songs.remove(i);
-            }
-        }
-
+    public void integrateSongs(ArrayList<LBSong> newSongs, boolean replaceMeta) {
         for(int i = 0; i < newSongs.size() ; i++) {
             integrateSong(newSongs.get(i), replaceMeta, (i == newSongs.size() - 1));
-        }
-
-        songsBookmarked = new ArrayList<>();
-        for(int i = 0; i < songs.size(); ++i) {
-            if(bookmarkedIds.indexOf(songs.get(i).getId()) > -1) {
-                songs.get(i).setBookmarked(true);
-                integrateSongBookmarked(songs.get(i), context);
-            }
         }
 
         Collections.sort(songs);
     }
 
     public void integrateSong(LBSong newSong, boolean replaceMeta, boolean propagate) {
+
         // is the song already included
         int idx = songs.indexOf(newSong);
         if(idx > -1) {
@@ -222,8 +206,9 @@ public class LBSongbook {
 
     public void integrateSongBookmarked(LBSong song, Context context) {
 
-        if(songsBookmarked == null)
+        if(songsBookmarked == null) {
             return;
+        }
 
         if(song.isBookmarked()) {
             songsBookmarked.add(bookmarkSong(song, context));
@@ -239,19 +224,14 @@ public class LBSongbook {
         return copySong;
     }
 
-    public ArrayList<LBSong> search(String keyword) { //may be callback
+    public ArrayList<LBSong> search(String keyword) { // may be callback
 
         ArrayList<LBSong> songsResult = new ArrayList<>();
 
-        try {
-            LBSong song = songWithNumber(keyword);
-
-            if(song != null) {
-                songsResult.add(song);
-                return songsResult;
-            }
-        } catch(NumberFormatException nfe) {
-            //nfe.printStackTrace();
+        LBSong song = songWithNumber(keyword);
+        if(song != null) {
+            songsResult.add(song);
+            return songsResult;
         }
 
         // return no results when query too short
@@ -266,7 +246,7 @@ public class LBSongbook {
             }
         }
 
-        Collections.sort(songsResult);
+        Collections.sort(songsResult, new SongComparator());
 
         return songsResult;
     }

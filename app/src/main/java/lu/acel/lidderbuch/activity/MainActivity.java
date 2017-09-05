@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnableSongs = new Runnable() {
         @Override
         public void run() {
-
-            String url = Settings.SONGBOOK_API;
+            String arg0 = String.valueOf(songbook.updateTime().getTime() / 1000);
+            String url = MessageFormat.format(Settings.SONGBOOK_API, arg0);
             new FetchSongsTask().execute(url);
 
             handler.postDelayed(runnableSongs, 300000); //300000
@@ -314,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(refreshSongs) {
                 ArrayList<LBSong> songs = LBSongbook.songsWithData(songsArray.toString());
-                songbook.integrateSongs(songs, false, true);
+                songbook.integrateSongs(songs, false);
                 refreshSongsList(getSongsWithBookmarked());
             }
         }

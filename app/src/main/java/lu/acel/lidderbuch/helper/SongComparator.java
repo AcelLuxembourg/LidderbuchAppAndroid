@@ -14,7 +14,7 @@ public class SongComparator implements Comparator<LBSong> {
 
         if(song1.lastSearchScore > song2.lastSearchScore) {
             return 1;
-        }else if (song1.lastSearchScore < song2.lastSearchScore) {
+        } else if (song1.lastSearchScore < song2.lastSearchScore) {
             return -1;
         } else {
             return 0;

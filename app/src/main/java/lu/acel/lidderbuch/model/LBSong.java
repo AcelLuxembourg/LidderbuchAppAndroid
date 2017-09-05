@@ -121,7 +121,7 @@ public class LBSong implements Serializable, Comparable {
     }
 
     public void setNumber(String number) {
-        this.number = number != null ? number : null;
+        this.number = !"null".equals(number) ? number : null;
     }
 
     public String getLanguage() {
@@ -208,8 +208,6 @@ public class LBSong implements Serializable, Comparable {
         this.lyrics_author = song.getLyrics_author();
         this.melody_author = song.getMelody_author();
     }
-
-
 
     public LBSong(JSONObject jsonSong) {
 
