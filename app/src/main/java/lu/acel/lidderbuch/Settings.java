@@ -8,7 +8,6 @@ public class Settings {
 
     public static final String SONGS_JSON = "songs_2015";
     public static final String SONGS_JSON_2017 = "songs_2017";
-
     public static final String SONGBOOK_API = "https://acel.lu/api/v1/songs?since={0}";
 
     public static final String BACKER_API = "https://acel.lu/api/v1/backers/lidderbuch_app";
