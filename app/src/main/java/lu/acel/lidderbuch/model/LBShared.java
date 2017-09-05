@@ -32,18 +32,18 @@ public class LBShared {
         return json;
     }
 
-    private static String getJsonPath() {
+    public static String getCorrectAssetsPrefix() {
         String path = Settings.SONGS_JSON;
 
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-        String currentDateTime = sdf.format(c.getTime());
-        try {
-            Date pr = sdf.parse("2017-09-15 09:45:00");
-            Date now = sdf.parse(currentDateTime);
+        Date now = c.getTime();
 
-            if(now.compareTo(pr) > 0) {
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        try {
+            Date pc = sdf.parse("2017-09-15 09:45:00");
+
+            if(now.compareTo(pc) > 0) {
                 path = Settings.SONGS_JSON_2017;
             }
         } catch (ParseException e) {
@@ -51,5 +51,9 @@ public class LBShared {
         }
 
         return path;
+    }
+
+    private static String getJsonPath() {
+        return getCorrectAssetsPrefix() + ".json";
     }
 }
