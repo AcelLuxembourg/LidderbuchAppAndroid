@@ -312,21 +312,20 @@ public class SongActivity extends AppCompatActivity {
                 ClipData clip = ClipData.newPlainText("label", song.getUrl().toString());
                 clipboard.setPrimaryClip(clip);
                 return true;
-            case R.id.send_by_sms:
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("sms:"));
-                i.putExtra("sms_body", song.getUrl().toString());
-                startActivity(i);
-                return true;
-            case R.id.send_by_email:
+//            case R.id.:
+//                Intent i = new Intent(Intent.ACTION_VIEW);
+//                i.setData(Uri.parse("sms:"));
+//                i.putExtra("sms_body", song.getUrl().toString());
+//                startActivity(i);
+//                return true;
+            case R.id.send_by:
                 Intent i2 = new Intent(Intent.ACTION_SEND);
-                i2.setType("message/rfc822");
-                i2.putExtra(Intent.EXTRA_SUBJECT, song.getName());
+                i2.setType("text/plain");
                 i2.putExtra(Intent.EXTRA_TEXT, song.getUrl().toString());
                 try {
-                    startActivity(Intent.createChooser(i2, getString(R.string.send_by_email)));
+                    startActivity(Intent.createChooser(i2, getString(R.string.send_by_message)));
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(this, getString(R.string.cant_use_mail), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.cant_use_app), Toast.LENGTH_SHORT).show();
                 }
                 return true;
             default:

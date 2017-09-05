@@ -46,7 +46,7 @@ import lu.acel.lidderbuch.network.LBNetwork;
 
 public class MainActivity extends AppCompatActivity {
 
-    String credits = "<a href='http://www.acel.lu/publications/lidderbuch'>Lidderbuch</a> ass eng App vun der <a href='http://acel.lu/'>ACEL</a>, dem Daachverband vun iwwer 40 lëtzebuergesch Studentencercelen. De Projet gouf vum <a href='http://2f.lt/1GioavM'>Fränz Friederes</a> an <a href='http://mirkomack.lu'>Mirko Mack</a> entwéckelt an ass op <a href='https://github.com/AcelLuxembourg/LidderbuchAppAndroid'>GitHub</a> ze fannen. <a href='http://acel.lu/contact'>Schreif eis</a>, wann däi Lidd feelt.";
+    String credits = "<a href='http://www.acel.lu/publications/lidderbuch'>Lidderbuch</a> ass eng App vun der <a href='http://acel.lu/'>ACEL</a>, dem Daachverband vun iwwer 40 lëtzebuergesch Studentencercelen. De Projet gouf vum <a href='http://mirkomack.lu'>Mirko Mack</a> entwéckelt an ass op <a href='https://github.com/AcelLuxembourg/LidderbuchAppAndroid'>GitHub</a> ze fannen. <a href='http://acel.lu/contact'>Schreif eis</a>, wann däi Lidd feelt.";
 
     private ArrayList<LBSong> songsWithBookmarked;
 
@@ -74,9 +74,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
 
-            String arg0 = String.valueOf(songbook.updateTime().getTime() / 1000);
-            //String arg0 = String.valueOf(1440754883); // for test
-            String url = MessageFormat.format(Settings.SONGBOOK_API, arg0);
+            String url = Settings.SONGBOOK_API;
             new FetchSongsTask().execute(url);
 
             handler.postDelayed(runnableSongs, 300000); //300000
@@ -86,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             LBSong songEdited = (LBSong) intent.getSerializableExtra("song");
             boolean bookmarked = intent.getBooleanExtra("bookmarked", false);
             songbook.integrateSong(songEdited, true, true);
 
-            if(bookmarked)
+            if(bookmarked) {
                 songbook.integrateSongBookmarked(songEdited, MainActivity.this);
+            }
         }
     };
 
@@ -168,15 +166,15 @@ public class MainActivity extends AppCompatActivity {
             songbookListview.setAdapter(songbookAdapter);
         }
 
-        if(state != null)
+        if(state != null) {
             songbookListview.onRestoreInstanceState(state);
+        }
 
         toolbarSearchButton.clearFocus();
     }
 
     @Override
     protected void onPause() {
-
         if(songbook.isHasChangesToSave()) {
             songbook.save(this);
         }
@@ -316,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(refreshSongs) {
                 ArrayList<LBSong> songs = LBSongbook.songsWithData(songsArray.toString());
-                songbook.integrateSongs(songs, false);
+                songbook.integrateSongs(songs, false, true);
                 refreshSongsList(getSongsWithBookmarked());
             }
         }

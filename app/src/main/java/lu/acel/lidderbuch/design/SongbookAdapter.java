@@ -15,7 +15,7 @@ import lu.acel.lidderbuch.R;
 import lu.acel.lidderbuch.model.LBSong;
 
 /**
- * Created by luis-fleta on 12/01/16.
+ * Created by mirkomack on 23.11.2016
  */
 public class SongbookAdapter extends ArrayAdapter<LBSong> {
 
@@ -75,8 +75,10 @@ public class SongbookAdapter extends ArrayAdapter<LBSong> {
                 headerTv.setVisibility(View.VISIBLE);
             }
 
-            if(song.getNumber() > 0) {
+            if(song.getNumber() != null) {
                 numberTv.setText(String.valueOf(song.getNumber()));
+            } else {
+                numberTv.setText("");
             }
             titleTv.setText(song.getName());
             previewTv.setText(song.preview());

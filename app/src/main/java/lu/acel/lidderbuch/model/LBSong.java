@@ -38,7 +38,7 @@ public class LBSong implements Serializable, Comparable {
     private int views = 0;
     private Date viewTime;
 
-    private int number;
+    private String number;
     private String way;
     private int year;
     private String lyrics_author;
@@ -116,12 +116,12 @@ public class LBSong implements Serializable, Comparable {
         this.viewTime = viewTime;
     }
 
-    public int getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setNumber(String number) {
+        this.number = number != null ? number : null;
     }
 
     public String getLanguage() {
@@ -247,7 +247,7 @@ public class LBSong implements Serializable, Comparable {
             url = new URL(urlStr);
 
             // optional attributes
-            number = jsonSong.optInt("number");
+            setNumber(jsonSong.optString("number"));
             way = StringHelper.optString(jsonSong, "way");
             year = jsonSong.optInt("year");
             lyrics_author = StringHelper.optString(jsonSong, "lyrics_author");
@@ -304,8 +304,8 @@ public class LBSong implements Serializable, Comparable {
 
         ArrayList<String> parts = new ArrayList<>();
 
-        if(this.number > 0) {
-            parts.add(context.getString(R.string.no) + " " + number);
+        if(!"".equals(number)) {
+            parts.add(context.getString(R.string.number) + " " + number);
         }
 
         if(!TextUtils.isEmpty(way)) {
@@ -432,9 +432,6 @@ public class LBSong implements Serializable, Comparable {
 
     @Override
     public int compareTo(Object another) {
-
-        int compareScore = ((LBSong) another).lastSearchScore;;
-
-        return compareScore - this.lastSearchScore;
+        return this.getPosition() - ((LBSong) another).getPosition();
     }
 }

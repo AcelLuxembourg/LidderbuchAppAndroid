@@ -29,6 +29,8 @@ public class LBSongbook {
     private ArrayList<LBSong> songs;
     private ArrayList<LBSong> songsBookmarked;
 
+    private Context context = null;
+
     public boolean isHasChangesToSave() {
         return hasChangesToSave;
     }
@@ -56,11 +58,12 @@ public class LBSongbook {
     public LBSongbook(Context context) {
         songs = load(context);
         songsBookmarked = loadBookmarked(context);
+        this.context = context;
     }
 
     private ArrayList<LBSong> load(Context context) {
 
-        ArrayList<LBSong> songsList = new ArrayList<>();
+        ArrayList<LBSong> songsList;
 
         // try loading from shared preferences
         String songsStr = FileHelper.getKey(context, "songsJson");
@@ -72,8 +75,9 @@ public class LBSongbook {
             songsList = songsWithData(loadJSONFromAsset(context));
         }
 
-        if(songsList == null)
-            return new ArrayList<LBSong>();
+        if(songsList == null) {
+            return new ArrayList<>();
+        }
 
         return songsList;
     }
@@ -101,7 +105,7 @@ public class LBSongbook {
         hasChangesToSave = false;
     }
 
-    public String loadJSONFromAsset(Context context) {
+    private String loadJSONFromAsset(Context context) {
         return LBShared.loadJSONFromAsset(context);
     }
 
@@ -149,11 +153,12 @@ public class LBSongbook {
 
     public Date updateTime() {
 
-        if(songs == null)
+        if(songs == null) {
             return null;
+        }
 
         Date updateTime = null;
-        for(int i = 0 ; i < songs.size() ; i++) {
+        for(int i = 0; i < songs.size(); i++) {
             if(updateTime == null || songs.get(i).getUpdate_time().getTime() > updateTime.getTime()) {
                 updateTime = songs.get(i).getUpdate_time();
             }
@@ -162,15 +167,36 @@ public class LBSongbook {
         return updateTime;
     }
 
-    public void integrateSongs(ArrayList<LBSong> newSongs, boolean replaceMeta) {
+    public void integrateSongs(ArrayList<LBSong> newSongs, boolean replaceMeta, boolean replaceAll) {
+        ArrayList<Integer> bookmarkedIds = new ArrayList<>();
+        for(int i = 0; i < songsBookmarked.size(); i++) {
+            bookmarkedIds.add(songsBookmarked.get(i).getId());
+            songsBookmarked.get(i).setBookmarked(false);
+        }
+
+        for(int i = songs.size() - 1; i >= 0; i--) {
+            int idx = newSongs.indexOf(songs.get(i));
+            if(idx < 0 || replaceAll) {
+                songs.remove(i);
+            }
+        }
+
         for(int i = 0; i < newSongs.size() ; i++) {
             integrateSong(newSongs.get(i), replaceMeta, (i == newSongs.size() - 1));
         }
 
+        songsBookmarked = new ArrayList<>();
+        for(int i = 0; i < songs.size(); ++i) {
+            if(bookmarkedIds.indexOf(songs.get(i).getId()) > -1) {
+                songs.get(i).setBookmarked(true);
+                integrateSongBookmarked(songs.get(i), context);
+            }
+        }
+
+        Collections.sort(songs);
     }
 
     public void integrateSong(LBSong newSong, boolean replaceMeta, boolean propagate) {
-
         // is the song already included
         int idx = songs.indexOf(newSong);
         if(idx > -1) {
@@ -185,9 +211,7 @@ public class LBSongbook {
                 // replace song
                 songs.set(idx, newSong);
             }
-        }
-        else {
-            // add song to library
+        } else {
             songs.add(newSong);
         }
 
@@ -219,11 +243,8 @@ public class LBSongbook {
 
         ArrayList<LBSong> songsResult = new ArrayList<>();
 
-        // handle song number
-        int number;
         try {
-            number = Integer.parseInt(keyword);
-            LBSong song = songWithNumber(number);
+            LBSong song = songWithNumber(keyword);
 
             if(song != null) {
                 songsResult.add(song);
@@ -260,10 +281,15 @@ public class LBSongbook {
         return null;
     }
 
-    public LBSong songWithNumber(int number) {
+    public LBSong songWithNumber(String number) {
+        if(number == null) {
+            return null;
+        }
+
         for(LBSong s : songs) {
-            if(s.getNumber() == number)
+            if(number.toLowerCase().equals(s.getNumber().toLowerCase())) {
                 return s;
+            }
         }
 
         return null;
