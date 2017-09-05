@@ -267,6 +267,10 @@ public class LBSongbook {
         }
 
         for(LBSong s : songs) {
+            if(s.getNumber() == null) {
+                continue;
+            }
+
             if(number.toLowerCase().equals(s.getNumber().toLowerCase())) {
                 return s;
             }
