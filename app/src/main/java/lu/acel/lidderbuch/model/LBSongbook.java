@@ -271,7 +271,7 @@ public class LBSongbook {
                 continue;
             }
 
-            if(number.toLowerCase().equals(s.getNumber().toLowerCase())) {
+            if(number.equalsIgnoreCase(s.getNumber())) {
                 return s;
             }
         }
