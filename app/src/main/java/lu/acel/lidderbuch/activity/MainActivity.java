@@ -46,7 +46,7 @@ import lu.acel.lidderbuch.network.LBNetwork;
 
 public class MainActivity extends AppCompatActivity {
 
-    String credits = "<a href='http://www.acel.lu/publications/lidderbuch'>Lidderbuch</a> ass eng App vun der <a href='http://acel.lu/'>ACEL</a>, dem Daachverband vun iwwer 40 lëtzebuergesch Studentencercelen. De Projet gouf vum <a href='http://mirkomack.lu'>Mirko Mack</a> entwéckelt an ass op <a href='https://github.com/AcelLuxembourg/LidderbuchAppAndroid'>GitHub</a> ze fannen. <a href='http://acel.lu/contact'>Schreif eis</a>, wann däi Lidd feelt.";
+    String credits = "<a href='http://www.acel.lu/publications/lidderbuch'>Lidderbuch</a> ass eng App vun der <a href='http://acel.lu/'>ACEL</a>, dem Daachverband vun iwwer 40 lëtzebuergesch Studentencercelen. De Projet gouf vum <a href='http://mirkomack.lu'>Mirko Mack</a> a <a href='http://fresh.lu'>Benoît Frisch</a> entwéckelt an ass op <a href='https://github.com/AcelLuxembourg/LidderbuchAppAndroid'>GitHub</a> ze fannen. <a href='http://acel.lu/contact'>Schreif eis</a>, wann däi Lidd feelt.";
 
     private ArrayList<LBSong> songsWithBookmarked;
 
